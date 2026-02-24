@@ -109,6 +109,57 @@ public function down()
 
 Use `vector_ip_ops` for inner product and `vector_cosine_ops` for cosine distance
 
+### Symfony (>=7.4)
+
+
+Register types in `config/packages/doctrine.yaml`
+```yaml
+doctrine:
+    dbal:
+        types:
+            vector: Pgvector\Doctrine\VectorType
+            halfvec: Pgvector\Doctrine\HalfVectorType
+            sparsevec: Pgvector\Doctrine\SparseVectorType
+```
+
+Enable the extension in a migration
+```
+php bin/console make:migration
+```
+```php
+public function up(Schema $schema): void
+{
+    $this->addSql('CREATE EXTENSION IF NOT EXISTS vector');
+}
+```
+```
+php bin/console doctrine:migrations:migrate
+```
+
+Use the `vector` type in your entities
+```php
+use Pgvector\Vector;
+
+#[ORM\Entity]
+class Item
+{
+    #[ORM\Column(type: 'vector', length: 3)]
+    private Vector $embedding;
+}
+```
+
+Query for nearest neighbors
+```php
+$results = $entityManager->createQuery(
+    'SELECT i FROM App\Entity\Item i ORDER BY cosine_distance(i.embedding, :embedding)'
+)
+->setParameter('embedding', new Vector([1, 2, 3]))
+->setMaxResults(5)
+->getResult();
+```
+
+Also supports `l2_distance`, `max_inner_product`, `l1_distance`, `hamming_distance`, and `jaccard_distance`
+
 ### Doctrine
 
 Install the package
