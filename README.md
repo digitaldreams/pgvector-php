@@ -120,6 +120,16 @@ doctrine:
             vector: Pgvector\Doctrine\VectorType
             halfvec: Pgvector\Doctrine\HalfVectorType
             sparsevec: Pgvector\Doctrine\SparseVectorType
+
+    orm:
+        dql:
+            string_functions:
+                cosine_distance: Pgvector\Doctrine\CosineDistance
+                l2_distance: Pgvector\Doctrine\L2Distance
+                max_inner_product: Pgvector\Doctrine\MaxInnerProduct
+                l1_distance: Pgvector\Doctrine\L1Distance
+                hamming_distance: Pgvector\Doctrine\HammingDistance
+                jaccard_distance: Pgvector\Doctrine\JaccardDistance
 ```
 
 Enable the extension in a migration
